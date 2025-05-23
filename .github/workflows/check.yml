@@ -21,6 +21,7 @@ concurrency:
   cancel-in-progress: true
 name: check
 jobs:
+
   fmt:
     runs-on: ubuntu-latest
     name: stable / fmt
@@ -34,6 +35,7 @@ jobs:
           components: rustfmt
       - name: cargo fmt --check
         run: cargo fmt --check
+
   clippy:
     runs-on: ubuntu-latest
     name: ${{ matrix.toolchain }} / clippy
@@ -59,20 +61,21 @@ jobs:
         with:
           reporter: 'github-pr-check'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-  # Enable once we have a released crate
-  # semver:
-  #   runs-on: ubuntu-latest
-  #   name: semver
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         submodules: true
-  #     - name: Install stable
-  #       uses: dtolnay/rust-toolchain@stable
-  #       with:
-  #         components: rustfmt
-  #     - name: cargo-semver-checks
-  #       uses: obi1kenobi/cargo-semver-checks-action@v2
+
+  semver:
+    runs-on: ubuntu-latest
+    name: semver
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: cargo-semver-checks
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+
   doc:
     # run docs generation on nightly rather than stable. This enables features like
     # https://doc.rust-lang.org/beta/unstable-book/language-features/doc-cfg.html which allows an
@@ -89,6 +92,7 @@ jobs:
         run: cargo doc --no-deps --all-features
         env:
           RUSTDOCFLAGS: --cfg docsrs
+
   hack:
     # cargo-hack checks combinations of feature flags to ensure that features are all additive
     # which is required for feature unification
@@ -106,6 +110,7 @@ jobs:
       # --feature-powerset runs for every combination of features
       - name: cargo hack
         run: cargo hack --feature-powerset check
+
   msrv:
     # check that we can build using the minimal rust version that is specified by this crate
     runs-on: ubuntu-latest
