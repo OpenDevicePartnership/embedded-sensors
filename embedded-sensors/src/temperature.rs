@@ -7,8 +7,8 @@
 //! Here is an example for the implementation of the TemperatureSensor trait for a temperature sensor.
 //!
 //! ```
-//! use embedded_sensors::sensor;
-//! use embedded_sensors::temperature::{TemperatureSensor, DegreesCelsius};
+//! use embedded_sensors_hal::sensor;
+//! use embedded_sensors_hal::temperature::{TemperatureSensor, DegreesCelsius};
 //!
 //! // A struct representing a temperature sensor.
 //! pub struct MyTempSensor {

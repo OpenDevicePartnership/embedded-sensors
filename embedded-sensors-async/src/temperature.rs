@@ -4,11 +4,11 @@
 //!
 //! # For HAL authors
 //!
-//! Here is an example for the implementation of the TemperatureSensor and TemperatureThresholdWait traits for a temperature sensor.
+//! Here is an example for the implementation of the TemperatureSensor and TemperatureThreshold traits for a temperature sensor.
 //!
 //! ```
 //! use embedded_sensors_hal_async::sensor;
-//! use embedded_sensors_hal_async::temperature::{TemperatureSensor, DegreesCelsius};
+//! use embedded_sensors_hal_async::temperature::{TemperatureSensor, TemperatureThreshold, DegreesCelsius};
 //!
 //! // A struct representing a temperature sensor.
 //! pub struct MyTempSensor {
@@ -39,7 +39,7 @@
 //!     }
 //! }
 //!
-//! impl TemperatureThresholdWait for MyTempSensor {
+//! impl TemperatureThreshold for MyTempSensor {
 //!     async fn set_temperature_threshold_low(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error> {
 //!         // Write value to threshold low register of sensor...
 //!         Ok(())
@@ -49,16 +49,10 @@
 //!         // Write value to threshold high register of sensor...
 //!         Ok(())
 //!     }
-//!
-//!     async fn wait_for_temperature_threshold(&mut self) -> Result<DegreesCelsius, Self::Error> {
-//!         // Await threshold alert (e.g. await GPIO level change on ALERT pin)...
-//!         // Then return current temperature so caller can determine which threshold was crossed
-//!         self.temperature().await
-//!     }
 //! }
 //! ```
 
-use crate::decl_threshold_wait;
+use crate::decl_threshold;
 use crate::sensor::ErrorType;
 pub use embedded_sensors_hal::temperature::DegreesCelsius;
 
@@ -75,7 +69,7 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
     }
 }
 
-decl_threshold_wait!(
+decl_threshold!(
     Temperature,
     TemperatureSensor,
     DegreesCelsius,

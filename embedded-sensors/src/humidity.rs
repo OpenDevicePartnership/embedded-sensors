@@ -11,7 +11,7 @@
 //! use embedded_sensors_hal::humidity::{RelativeHumiditySensor, Percentage};
 //!
 //! // A struct representing a humidity sensor.
-//! pub struct MyHumidityensor {
+//! pub struct MyHumiditySensor {
 //!     // ...
 //! }
 //!
