@@ -28,6 +28,12 @@ macro_rules! decl_threshold_traits {
                 async fn [<wait_for_ $SensorName:snake _threshold>](&mut self) -> Result<$SampleType, Self::Error>;
             }
 
+            #[doc = concat!(" Asynchronously set ", stringify!($SensorName), " threshold hysteresis.")]
+            pub trait [<$SensorName Hysteresis>]: [<$SensorName ThresholdSet>] {
+                #[doc = concat!(" Set ", stringify!($SensorName), " threshold hysteresis (in ", $unit, ").")]
+                async fn [<set_ $SensorName:snake _threshold_hysteresis>](&mut self, hysteresis: $SampleType) -> Result<(), Self::Error>;
+            }
+
             impl<T: [<$SensorName ThresholdSet>] + ?Sized> [<$SensorName ThresholdSet>] for &mut T {
                 async fn [<set_ $SensorName:snake _threshold_low>](&mut self, threshold: $SampleType) -> Result<(), Self::Error> {
                     T::[<set_ $SensorName:snake _threshold_low>](self, threshold).await
@@ -41,6 +47,12 @@ macro_rules! decl_threshold_traits {
             impl<T: [<$SensorName ThresholdWait>] + ?Sized> [<$SensorName ThresholdWait>] for &mut T {
                 async fn [<wait_for_ $SensorName:snake _threshold>](&mut self) -> Result<$SampleType, Self::Error> {
                     T::[<wait_for_ $SensorName:snake _threshold>](self).await
+                }
+            }
+
+            impl<T: [<$SensorName Hysteresis>] + ?Sized> [<$SensorName Hysteresis>] for &mut T {
+                async fn [<set_ $SensorName:snake _threshold_hysteresis>](&mut self, hysteresis: $SampleType) -> Result<(), Self::Error> {
+                    T::[<set_ $SensorName:snake _threshold_hysteresis>](self, hysteresis).await
                 }
             }
         }

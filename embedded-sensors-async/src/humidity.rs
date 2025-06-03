@@ -10,8 +10,8 @@
 //! ```
 //! use embedded_sensors_hal_async::sensor;
 //! use embedded_sensors_hal_async::humidity::{
-//!     Percentage, RelativeHumiditySensor, RelativeHumidityThresholdSet,
-//!     RelativeHumidityThresholdWait,
+//!     Percentage, RelativeHumidityHysteresis, RelativeHumiditySensor,
+//!     RelativeHumidityThresholdSet, RelativeHumidityThresholdWait,
 //! };
 //!
 //! // A struct representing a humidity sensor.
@@ -46,16 +46,16 @@
 //! impl RelativeHumidityThresholdSet for MyHumiditySensor {
 //!     async fn set_relative_humidity_threshold_low(
 //!         &mut self,
-//!         threshold: Percentage)
-//!     -> Result<(), Self::Error> {
+//!         threshold: Percentage
+//!     ) -> Result<(), Self::Error> {
 //!         // Write value to threshold low register of sensor...
 //!         Ok(())
 //!     }
 //!
 //!     async fn set_relative_humidity_threshold_high(
 //!         &mut self,
-//!         threshold: Percentage)
-//!     -> Result<(), Self::Error> {
+//!         threshold: Percentage
+//!     ) -> Result<(), Self::Error> {
 //!         // Write value to threshold high register of sensor...
 //!         Ok(())
 //!     }
@@ -68,6 +68,16 @@
 //!         // Await threshold alert (e.g. await GPIO level change on ALERT pin)...
 //!         // Then return current relative humidity so caller can determine which threshold was crossed
 //!         self.relative_humidity().await
+//!     }
+//! }
+//!
+//! impl RelativeHumidityHysteresis for MyHumiditySensor {
+//!     async fn set_relative_humidity_threshold_hysteresis(
+//!         &mut self,
+//!         hysteresis: Percentage
+//!     ) -> Result<(), Self::Error> {
+//!         // Write value to threshold hysteresis register of sensor...
+//!         Ok(())
 //!     }
 //! }
 //! ```
