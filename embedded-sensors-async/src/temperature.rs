@@ -8,7 +8,10 @@
 //!
 //! ```
 //! use embedded_sensors_hal_async::sensor;
-//! use embedded_sensors_hal_async::temperature::{TemperatureSensor, DegreesCelsius, TemperatureThresholdWait};
+//! use embedded_sensors_hal_async::temperature::{
+//!     DegreesCelsius, TemperatureHysteresis, TemperatureSensor,
+//!     TemperatureThresholdSet, TemperatureThresholdWait,
+//! };
 //!
 //! // A struct representing a temperature sensor.
 //! pub struct MyTempSensor {
@@ -39,26 +42,46 @@
 //!     }
 //! }
 //!
-//! impl TemperatureThresholdWait for MyTempSensor {
-//!     async fn set_temperature_threshold_low(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error> {
+//! impl TemperatureThresholdSet for MyTempSensor {
+//!     async fn set_temperature_threshold_low(
+//!         &mut self,
+//!         threshold: DegreesCelsius
+//!     ) -> Result<(), Self::Error> {
 //!         // Write value to threshold low register of sensor...
 //!         Ok(())
 //!     }
 //!
-//!     async fn set_temperature_threshold_high(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error> {
+//!     async fn set_temperature_threshold_high(
+//!         &mut self,
+//!         threshold: DegreesCelsius
+//!     ) -> Result<(), Self::Error> {
 //!         // Write value to threshold high register of sensor...
 //!         Ok(())
 //!     }
+//! }
 //!
-//!     async fn wait_for_temperature_threshold(&mut self) -> Result<DegreesCelsius, Self::Error> {
+//! impl TemperatureThresholdWait for MyTempSensor {
+//!     async fn wait_for_temperature_threshold(
+//!         &mut self
+//!     ) -> Result<DegreesCelsius, Self::Error> {
 //!         // Await threshold alert (e.g. await GPIO level change on ALERT pin)...
 //!         // Then return current temperature so caller can determine which threshold was crossed
 //!         self.temperature().await
 //!     }
 //! }
+//!
+//! impl TemperatureHysteresis for MyTempSensor {
+//!     async fn set_temperature_threshold_hysteresis(
+//!         &mut self,
+//!         hysteresis: DegreesCelsius
+//!     ) -> Result<(), Self::Error> {
+//!         // Write value to threshold hysteresis register of sensor...
+//!         Ok(())
+//!     }
+//! }
 //! ```
 
-use crate::decl_threshold_wait;
+use crate::decl_threshold_traits;
 use crate::sensor::ErrorType;
 pub use embedded_sensors_hal::temperature::DegreesCelsius;
 
@@ -75,7 +98,7 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
     }
 }
 
-decl_threshold_wait!(
+decl_threshold_traits!(
     Temperature,
     TemperatureSensor,
     DegreesCelsius,

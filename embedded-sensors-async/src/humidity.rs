@@ -9,7 +9,10 @@
 //!
 //! ```
 //! use embedded_sensors_hal_async::sensor;
-//! use embedded_sensors_hal_async::humidity::{RelativeHumiditySensor, Percentage, RelativeHumidityThresholdWait};
+//! use embedded_sensors_hal_async::humidity::{
+//!     Percentage, RelativeHumidityHysteresis, RelativeHumiditySensor,
+//!     RelativeHumidityThresholdSet, RelativeHumidityThresholdWait,
+//! };
 //!
 //! // A struct representing a humidity sensor.
 //! pub struct MyHumiditySensor {
@@ -40,23 +43,25 @@
 //!     }
 //! }
 //!
-//! impl RelativeHumidityThresholdWait for MyHumiditySensor {
+//! impl RelativeHumidityThresholdSet for MyHumiditySensor {
 //!     async fn set_relative_humidity_threshold_low(
 //!         &mut self,
-//!         threshold: Percentage)
-//!     -> Result<(), Self::Error> {
+//!         threshold: Percentage
+//!     ) -> Result<(), Self::Error> {
 //!         // Write value to threshold low register of sensor...
 //!         Ok(())
 //!     }
 //!
 //!     async fn set_relative_humidity_threshold_high(
 //!         &mut self,
-//!         threshold: Percentage)
-//!     -> Result<(), Self::Error> {
+//!         threshold: Percentage
+//!     ) -> Result<(), Self::Error> {
 //!         // Write value to threshold high register of sensor...
 //!         Ok(())
 //!     }
+//! }
 //!
+//! impl RelativeHumidityThresholdWait for MyHumiditySensor {
 //!     async fn wait_for_relative_humidity_threshold(
 //!         &mut self,
 //!     ) -> Result<Percentage, Self::Error> {
@@ -65,9 +70,19 @@
 //!         self.relative_humidity().await
 //!     }
 //! }
+//!
+//! impl RelativeHumidityHysteresis for MyHumiditySensor {
+//!     async fn set_relative_humidity_threshold_hysteresis(
+//!         &mut self,
+//!         hysteresis: Percentage
+//!     ) -> Result<(), Self::Error> {
+//!         // Write value to threshold hysteresis register of sensor...
+//!         Ok(())
+//!     }
+//! }
 //! ```
 
-use crate::decl_threshold_wait;
+use crate::decl_threshold_traits;
 use crate::sensor::ErrorType;
 pub use embedded_sensors_hal::humidity::Percentage;
 
@@ -84,7 +99,7 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
     }
 }
 
-decl_threshold_wait!(
+decl_threshold_traits!(
     RelativeHumidity,
     RelativeHumiditySensor,
     Percentage,
