@@ -63,9 +63,8 @@ mod tests {
     use super::*;
     use crate::sensor::{Error, ErrorKind};
 
-    // Mock test values
-    const TEST_TEMP_1: DegreesCelsius = 25.0;
-    const TEST_TEMP_2: DegreesCelsius = 30.5;
+    // Mock test value
+    const TEST_TEMP: DegreesCelsius = 27.0;
 
     #[derive(Debug)]
     struct MockError;
@@ -92,18 +91,23 @@ mod tests {
 
     #[test]
     fn test_temperature_sensor_trait() {
-        let mut sensor = MockTempSensor { value: TEST_TEMP_1 };
+        let mut sensor = MockTempSensor {
+            value: TEST_TEMP,
+        };
         let result = sensor.temperature();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_TEMP_1);
+        assert_eq!(result.unwrap(), TEST_TEMP);
     }
 
     #[test]
     fn test_temperature_sensor_trait_mut_ref() {
-        let mut sensor = MockTempSensor { value: TEST_TEMP_2 };
+        let mut sensor = MockTempSensor {
+            value: TEST_TEMP,
+        };
         let mut_ref = &mut sensor;
         let result = mut_ref.temperature();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_TEMP_2);
+        let value = result.unwrap();
+        assert_eq!(value, TEST_TEMP);
     }
 }

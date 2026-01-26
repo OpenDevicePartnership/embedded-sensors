@@ -63,9 +63,8 @@ mod tests {
     use super::*;
     use crate::sensor::{Error, ErrorKind};
 
-    // Mock test values
-    const TEST_HUMIDITY_1: Percentage = 65.0;
-    const TEST_HUMIDITY_2: Percentage = 50.5;
+    // Mock test value
+    const TEST_HUMIDITY: Percentage = 65.0;
 
     #[derive(Debug)]
     struct MockError;
@@ -93,21 +92,22 @@ mod tests {
     #[test]
     fn test_humidity_sensor_trait() {
         let mut sensor = MockHumiditySensor {
-            value: TEST_HUMIDITY_1,
+            value: TEST_HUMIDITY,
         };
         let result = sensor.relative_humidity();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_HUMIDITY_1);
+        assert_eq!(result.unwrap(), TEST_HUMIDITY);
     }
 
     #[test]
     fn test_humidity_sensor_trait_mut_ref() {
         let mut sensor = MockHumiditySensor {
-            value: TEST_HUMIDITY_2,
+            value: TEST_HUMIDITY,
         };
         let mut_ref = &mut sensor;
         let result = mut_ref.relative_humidity();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_HUMIDITY_2);
+        let value = result.unwrap();
+        assert_eq!(value, TEST_HUMIDITY);
     }
 }

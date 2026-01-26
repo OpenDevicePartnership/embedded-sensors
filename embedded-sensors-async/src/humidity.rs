@@ -112,12 +112,10 @@ mod tests {
     use crate::sensor::{Error, ErrorKind};
 
     // Mock test values
-    const TEST_HUMIDITY_1: Percentage = 65.0;
-    const TEST_HUMIDITY_2: Percentage = 50.5;
-    const TEST_HUMIDITY_3: Percentage = 60.0;
+    const TEST_HUMIDITY: Percentage = 65.0;
     const TEST_THRESHOLD_LOW: Percentage = 30.0;
     const TEST_THRESHOLD_HIGH: Percentage = 80.0;
-    const INITIAL_THRESHOLD: Percentage = 0.0;
+    const TEST_INITIAL_THRESHOLD: Percentage = 0.0;
 
     #[derive(Debug)]
     struct MockError;
@@ -165,34 +163,34 @@ mod tests {
     #[tokio::test]
     async fn test_async_humidity_sensor_trait() {
         let mut sensor = MockAsyncHumiditySensor {
-            value: TEST_HUMIDITY_1,
-            threshold_low: INITIAL_THRESHOLD,
-            threshold_high: INITIAL_THRESHOLD,
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
         };
         let result = sensor.relative_humidity().await;
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_HUMIDITY_1);
+        assert_eq!(result.unwrap(), TEST_HUMIDITY);
     }
 
     #[tokio::test]
     async fn test_async_humidity_sensor_trait_mut_ref() {
         let mut sensor = MockAsyncHumiditySensor {
-            value: TEST_HUMIDITY_2,
-            threshold_low: INITIAL_THRESHOLD,
-            threshold_high: INITIAL_THRESHOLD,
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
         };
         let mut_ref = &mut sensor;
         let result = mut_ref.relative_humidity().await;
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_HUMIDITY_2);
+        assert_eq!(result.unwrap(), TEST_HUMIDITY);
     }
 
     #[tokio::test]
     async fn test_async_humidity_threshold_set_trait() {
         let mut sensor = MockAsyncHumiditySensor {
-            value: TEST_HUMIDITY_3,
-            threshold_low: INITIAL_THRESHOLD,
-            threshold_high: INITIAL_THRESHOLD,
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
         };
 
         let result_low = sensor
@@ -211,16 +209,31 @@ mod tests {
     #[tokio::test]
     async fn test_async_humidity_threshold_set_trait_mut_ref() {
         let mut sensor = MockAsyncHumiditySensor {
-            value: TEST_HUMIDITY_3,
-            threshold_low: INITIAL_THRESHOLD,
-            threshold_high: INITIAL_THRESHOLD,
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
         };
-        let mut_ref = &mut sensor;
 
-        let result = mut_ref
-            .set_relative_humidity_threshold_low(TEST_THRESHOLD_LOW)
-            .await;
-        assert!(result.is_ok());
+        {
+            let mut_ref = &mut sensor;
+            let result_low = mut_ref
+                .set_relative_humidity_threshold_low(TEST_THRESHOLD_LOW)
+                .await;
+            assert!(result_low.is_ok());
+        }
+
         assert_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+        assert_ne!(sensor.threshold_low, TEST_INITIAL_THRESHOLD);
+
+        {
+            let mut_ref = &mut sensor;
+            let result_high = mut_ref
+                .set_relative_humidity_threshold_high(TEST_THRESHOLD_HIGH)
+                .await;
+            assert!(result_high.is_ok());
+        }
+
+        assert_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
+        assert_ne!(sensor.threshold_high, TEST_INITIAL_THRESHOLD);
     }
 }
