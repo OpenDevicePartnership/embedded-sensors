@@ -105,3 +105,122 @@ decl_threshold_traits!(
     Percentage,
     "percentage"
 );
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sensor::{Error, ErrorKind};
+
+    // Mock test values
+    const TEST_HUMIDITY_1: Percentage = 65.0;
+    const TEST_HUMIDITY_2: Percentage = 50.5;
+    const TEST_HUMIDITY_3: Percentage = 60.0;
+    const TEST_THRESHOLD_LOW: Percentage = 30.0;
+    const TEST_THRESHOLD_HIGH: Percentage = 80.0;
+    const INITIAL_THRESHOLD: Percentage = 0.0;
+
+    #[derive(Debug)]
+    struct MockError;
+
+    impl Error for MockError {
+        fn kind(&self) -> ErrorKind {
+            ErrorKind::Other
+        }
+    }
+
+    struct MockAsyncHumiditySensor {
+        value: Percentage,
+        threshold_low: Percentage,
+        threshold_high: Percentage,
+    }
+
+    impl crate::sensor::ErrorType for MockAsyncHumiditySensor {
+        type Error = MockError;
+    }
+
+    impl RelativeHumiditySensor for MockAsyncHumiditySensor {
+        async fn relative_humidity(&mut self) -> Result<Percentage, Self::Error> {
+            Ok(self.value)
+        }
+    }
+
+    impl RelativeHumidityThresholdSet for MockAsyncHumiditySensor {
+        async fn set_relative_humidity_threshold_low(
+            &mut self,
+            threshold: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.threshold_low = threshold;
+            Ok(())
+        }
+
+        async fn set_relative_humidity_threshold_high(
+            &mut self,
+            threshold: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.threshold_high = threshold;
+            Ok(())
+        }
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_sensor_trait() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY_1,
+            threshold_low: INITIAL_THRESHOLD,
+            threshold_high: INITIAL_THRESHOLD,
+        };
+        let result = sensor.relative_humidity().await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), TEST_HUMIDITY_1);
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_sensor_trait_mut_ref() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY_2,
+            threshold_low: INITIAL_THRESHOLD,
+            threshold_high: INITIAL_THRESHOLD,
+        };
+        let mut_ref = &mut sensor;
+        let result = mut_ref.relative_humidity().await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), TEST_HUMIDITY_2);
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_threshold_set_trait() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY_3,
+            threshold_low: INITIAL_THRESHOLD,
+            threshold_high: INITIAL_THRESHOLD,
+        };
+
+        let result_low = sensor
+            .set_relative_humidity_threshold_low(TEST_THRESHOLD_LOW)
+            .await;
+        assert!(result_low.is_ok());
+        assert_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+
+        let result_high = sensor
+            .set_relative_humidity_threshold_high(TEST_THRESHOLD_HIGH)
+            .await;
+        assert!(result_high.is_ok());
+        assert_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_threshold_set_trait_mut_ref() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY_3,
+            threshold_low: INITIAL_THRESHOLD,
+            threshold_high: INITIAL_THRESHOLD,
+        };
+        let mut_ref = &mut sensor;
+
+        let result = mut_ref
+            .set_relative_humidity_threshold_low(TEST_THRESHOLD_LOW)
+            .await;
+        assert!(result.is_ok());
+        assert_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+    }
+}

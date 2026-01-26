@@ -15,6 +15,9 @@ version = "0.3.0"
 defmt = ["dep:defmt", "embedded-sensors-hal/defmt"]
 
 [dependencies]
-embedded-sensors-hal = "0.1.0"
+embedded-sensors-hal = { version = "0.1.0", path = "../embedded-sensors" }
 defmt = { package = "defmt", version = "1.0.0", optional = true }
 paste = "1.0.15"
+
+[dev-dependencies]
+tokio = { version = "1.49", features = ["macros", "rt"] }
