@@ -58,6 +58,14 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
     }
 }
 
+decl_threshold_traits!(
+    blocking,
+    Temperature,
+    TemperatureSensor,
+    DegreesCelsius,
+    "degrees Celsius"
+);
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -108,3 +116,4 @@ mod tests {
         assert_approx_eq!(value, TEST_TEMP);
     }
 }
+use crate::decl_threshold_traits;

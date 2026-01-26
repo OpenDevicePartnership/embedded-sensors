@@ -82,8 +82,7 @@
 //! }
 //! ```
 
-use crate::decl_threshold_traits;
-use crate::sensor::ErrorType;
+use crate::sensor::{decl_threshold_traits, ErrorType};
 pub use embedded_sensors_hal::humidity::Percentage;
 
 /// Async Relative Humidity Sensor methods.
@@ -100,6 +99,7 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
 }
 
 decl_threshold_traits!(
+    async,
     RelativeHumidity,
     RelativeHumiditySensor,
     Percentage,

@@ -58,6 +58,14 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
     }
 }
 
+decl_threshold_traits!(
+    blocking,
+    RelativeHumidity,
+    RelativeHumiditySensor,
+    Percentage,
+    "percentage"
+);
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -112,3 +120,4 @@ mod tests {
         assert_approx_eq!(value, TEST_HUMIDITY);
     }
 }
+use crate::decl_threshold_traits;
