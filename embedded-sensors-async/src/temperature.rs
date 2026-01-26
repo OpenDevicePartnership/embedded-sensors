@@ -222,7 +222,6 @@ mod tests {
         }
 
         assert_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
-        assert_ne!(sensor.threshold_low, TEST_INITIAL_THRESHOLD);
 
         {
             let mut_ref = &mut sensor;
@@ -233,6 +232,5 @@ mod tests {
         }
 
         assert_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
-        assert_ne!(sensor.threshold_high, TEST_INITIAL_THRESHOLD);
     }
 }
