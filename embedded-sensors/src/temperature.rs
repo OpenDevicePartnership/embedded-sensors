@@ -91,9 +91,7 @@ mod tests {
 
     #[test]
     fn test_temperature_sensor_trait() {
-        let mut sensor = MockTempSensor {
-            value: TEST_TEMP,
-        };
+        let mut sensor = MockTempSensor { value: TEST_TEMP };
         let result = sensor.temperature();
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), TEST_TEMP);
@@ -101,9 +99,7 @@ mod tests {
 
     #[test]
     fn test_temperature_sensor_trait_mut_ref() {
-        let mut sensor = MockTempSensor {
-            value: TEST_TEMP,
-        };
+        let mut sensor = MockTempSensor { value: TEST_TEMP };
         let mut_ref = &mut sensor;
         let result = mut_ref.temperature();
         assert!(result.is_ok());
