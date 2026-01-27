@@ -2,22 +2,5 @@
 resolver = "2"
 members = ["embedded-sensors", "embedded-sensors-async"]
 
-[workspace.dependencies]
-addr2line = "=0.24.2"
-backtrace = "=0.3.75"
-cfg-if = "=1.0.0"
-gimli = "=0.31.1"
-libc = "=0.2.172"
-memchr = "=2.7.4"
-miniz_oxide = "=0.8.8"
-object = "=0.36.7"
-proc-macro2 = "=1.0.95"
-quote = "=1.0.40"
-rustc-demangle = "=0.1.24"
-syn = "=2.0.104"
-thiserror = "=2.0.12"
-thiserror-impl = "=2.0.12"
-unicode-ident = "=1.0.18"
-
 [patch.crates-io]
 embedded-sensors-hal = { path = "embedded-sensors" }

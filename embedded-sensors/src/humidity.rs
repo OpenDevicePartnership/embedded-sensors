@@ -62,6 +62,7 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
 mod tests {
     use super::*;
     use crate::sensor::{Error, ErrorKind};
+    use assert_approx_eq::assert_approx_eq;
 
     // Mock test value
     const TEST_HUMIDITY: Percentage = 65.0;
@@ -96,7 +97,7 @@ mod tests {
         };
         let result = sensor.relative_humidity();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_HUMIDITY);
+        assert_approx_eq!(result.unwrap(), TEST_HUMIDITY);
     }
 
     #[test]
@@ -108,6 +109,6 @@ mod tests {
         let result = mut_ref.relative_humidity();
         assert!(result.is_ok());
         let value = result.unwrap();
-        assert_eq!(value, TEST_HUMIDITY);
+        assert_approx_eq!(value, TEST_HUMIDITY);
     }
 }

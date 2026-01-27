@@ -62,6 +62,7 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
 mod tests {
     use super::*;
     use crate::sensor::{Error, ErrorKind};
+    use assert_approx_eq::assert_approx_eq;
 
     // Mock test value
     const TEST_TEMP: DegreesCelsius = 27.0;
@@ -94,7 +95,7 @@ mod tests {
         let mut sensor = MockTempSensor { value: TEST_TEMP };
         let result = sensor.temperature();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_TEMP);
+        assert_approx_eq!(result.unwrap(), TEST_TEMP);
     }
 
     #[test]
@@ -104,6 +105,6 @@ mod tests {
         let result = mut_ref.temperature();
         assert!(result.is_ok());
         let value = result.unwrap();
-        assert_eq!(value, TEST_TEMP);
+        assert_approx_eq!(value, TEST_TEMP);
     }
 }

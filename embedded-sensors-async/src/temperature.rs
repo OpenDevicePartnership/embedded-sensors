@@ -109,6 +109,7 @@ decl_threshold_traits!(
 mod tests {
     use super::*;
     use crate::sensor::{Error, ErrorKind};
+    use assert_approx_eq::assert_approx_eq;
 
     // Mock test values
     const TEST_TEMP: DegreesCelsius = 25.0;
@@ -168,7 +169,7 @@ mod tests {
         };
         let result = sensor.temperature().await;
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_TEMP);
+        assert_approx_eq!(result.unwrap(), TEST_TEMP);
     }
 
     #[tokio::test]
@@ -181,7 +182,7 @@ mod tests {
         let mut_ref = &mut sensor;
         let result = mut_ref.temperature().await;
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), TEST_TEMP);
+        assert_approx_eq!(result.unwrap(), TEST_TEMP);
     }
 
     #[tokio::test]
@@ -196,13 +197,13 @@ mod tests {
             .set_temperature_threshold_low(TEST_THRESHOLD_LOW)
             .await;
         assert!(result_low.is_ok());
-        assert_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+        assert_approx_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
 
         let result_high = sensor
             .set_temperature_threshold_high(TEST_THRESHOLD_HIGH)
             .await;
         assert!(result_high.is_ok());
-        assert_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
+        assert_approx_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
     }
 
     #[tokio::test]
@@ -221,7 +222,7 @@ mod tests {
             assert!(result_low.is_ok());
         }
 
-        assert_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+        assert_approx_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
 
         {
             let mut_ref = &mut sensor;
@@ -231,6 +232,6 @@ mod tests {
             assert!(result_high.is_ok());
         }
 
-        assert_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
+        assert_approx_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
     }
 }
