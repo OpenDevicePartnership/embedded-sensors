@@ -20,4 +20,4 @@ defmt = { package = "defmt", version = "1.0.0", optional = true }
 paste = "1.0.15"
 
 [dev-dependencies]
-tokio = { version = "1.49", features = ["macros", "rt"] }
+tokio = { version = "=1.45.0", features = ["macros", "rt"] }
