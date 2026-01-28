@@ -58,6 +58,16 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
     }
 }
 
+// This macro generates the following blocking threshold traits:
+//
+// pub trait TemperatureThresholdSet: TemperatureSensor {
+//     fn set_temperature_threshold_low(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error>;
+//     fn set_temperature_threshold_high(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error>;
+// }
+//
+// pub trait TemperatureHysteresis: TemperatureThresholdSet {
+//     fn set_temperature_threshold_hysteresis(&mut self, hysteresis: DegreesCelsius) -> Result<(), Self::Error>;
+// }
 decl_threshold_traits!(
     blocking,
     Temperature,

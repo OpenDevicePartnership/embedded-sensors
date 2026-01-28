@@ -97,6 +97,20 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
     }
 }
 
+// This macro generates the following async threshold traits:
+//
+// pub trait TemperatureThresholdSet: TemperatureSensor {
+//     async fn set_temperature_threshold_low(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error>;
+//     async fn set_temperature_threshold_high(&mut self, threshold: DegreesCelsius) -> Result<(), Self::Error>;
+// }
+//
+// pub trait TemperatureHysteresis: TemperatureThresholdSet {
+//     async fn set_temperature_threshold_hysteresis(&mut self, hysteresis: DegreesCelsius) -> Result<(), Self::Error>;
+// }
+//
+// pub trait TemperatureThresholdWait: TemperatureThresholdSet {
+//     async fn wait_for_temperature_threshold(&mut self) -> Result<DegreesCelsius, Self::Error>;
+// }
 decl_threshold_traits!(
     async,
     Temperature,

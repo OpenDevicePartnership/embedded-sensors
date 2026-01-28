@@ -58,6 +58,16 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
     }
 }
 
+// This macro generates the following blocking threshold traits:
+//
+// pub trait RelativeHumidityThresholdSet: RelativeHumiditySensor {
+//     fn set_relative_humidity_threshold_low(&mut self, threshold: Percentage) -> Result<(), Self::Error>;
+//     fn set_relative_humidity_threshold_high(&mut self, threshold: Percentage) -> Result<(), Self::Error>;
+// }
+//
+// pub trait RelativeHumidityHysteresis: RelativeHumidityThresholdSet {
+//     fn set_relative_humidity_threshold_hysteresis(&mut self, hysteresis: Percentage) -> Result<(), Self::Error>;
+// }
 decl_threshold_traits!(
     blocking,
     RelativeHumidity,
