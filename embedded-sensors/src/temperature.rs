@@ -40,8 +40,8 @@
 //! }
 //! ```
 
-use crate::sensor::ErrorType;
 use crate::decl_threshold_traits;
+use crate::sensor::ErrorType;
 
 /// Associates the units temperature samples are measured in with the underlying data type.
 pub type DegreesCelsius = f32;

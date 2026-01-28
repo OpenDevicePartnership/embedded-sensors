@@ -40,8 +40,8 @@
 //! }
 //! ```
 
-use crate::sensor::ErrorType;
 use crate::decl_threshold_traits;
+use crate::sensor::ErrorType;
 
 /// Associates the units relative humidity (RH) samples are measured in with the underlying data type.
 pub type Percentage = f32;
