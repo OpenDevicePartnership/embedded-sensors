@@ -2,7 +2,7 @@
 //!
 //! This module contains error-handling and traits generic to all sensors.
 //!
-//! Please see specific sensor-type modules for addtional example usage
+//! Please see specific sensor-type modules for additional example usage
 //! (e.g. see temperature.rs for TemperatureSensor examples).
 
 /// Sensor error.
@@ -58,7 +58,7 @@ impl core::fmt::Display for ErrorKind {
         match self {
             Self::Peripheral => write!(
                 f,
-                "An error occured on the underlying peripheral. The original error may contain more informaton"
+                "An error occurred on the underlying peripheral. The original error may contain more information"
             ),
             Self::NotReady => write!(f, "Sensor is not yet ready to be sampled"),
             Self::Saturated => write!(f, "Sensor is saturated thus samples may be invalid"),

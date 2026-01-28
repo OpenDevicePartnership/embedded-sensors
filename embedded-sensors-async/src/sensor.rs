@@ -2,7 +2,7 @@
 //!
 //! This module contains traits generic to all sensors.
 //!
-//! Please see specific sensor-type modules for addtional example usage
+//! Please see specific sensor-type modules for additional example usage
 //! (e.g. see temperature.rs for TemperatureSensor examples).
 
 pub use embedded_sensors_hal::sensor::{Error, ErrorKind, ErrorType};
