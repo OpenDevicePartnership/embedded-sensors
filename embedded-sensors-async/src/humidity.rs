@@ -105,3 +105,134 @@ decl_threshold_traits!(
     Percentage,
     "percentage"
 );
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sensor::{Error, ErrorKind};
+    use assert_approx_eq::assert_approx_eq;
+
+    // Mock test values
+    const TEST_HUMIDITY: Percentage = 65.0;
+    const TEST_THRESHOLD_LOW: Percentage = 30.0;
+    const TEST_THRESHOLD_HIGH: Percentage = 80.0;
+    const TEST_INITIAL_THRESHOLD: Percentage = 0.0;
+
+    #[derive(Debug)]
+    struct MockError;
+
+    impl Error for MockError {
+        fn kind(&self) -> ErrorKind {
+            ErrorKind::Other
+        }
+    }
+
+    struct MockAsyncHumiditySensor {
+        value: Percentage,
+        threshold_low: Percentage,
+        threshold_high: Percentage,
+    }
+
+    impl crate::sensor::ErrorType for MockAsyncHumiditySensor {
+        type Error = MockError;
+    }
+
+    impl RelativeHumiditySensor for MockAsyncHumiditySensor {
+        async fn relative_humidity(&mut self) -> Result<Percentage, Self::Error> {
+            Ok(self.value)
+        }
+    }
+
+    impl RelativeHumidityThresholdSet for MockAsyncHumiditySensor {
+        async fn set_relative_humidity_threshold_low(
+            &mut self,
+            threshold: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.threshold_low = threshold;
+            Ok(())
+        }
+
+        async fn set_relative_humidity_threshold_high(
+            &mut self,
+            threshold: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.threshold_high = threshold;
+            Ok(())
+        }
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_sensor_trait() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
+        };
+        let result = sensor.relative_humidity().await;
+        assert!(result.is_ok());
+        assert_approx_eq!(result.unwrap(), TEST_HUMIDITY);
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_sensor_trait_mut_ref() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
+        };
+        let mut_ref = &mut sensor;
+        let result = mut_ref.relative_humidity().await;
+        assert!(result.is_ok());
+        assert_approx_eq!(result.unwrap(), TEST_HUMIDITY);
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_threshold_set_trait() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
+        };
+
+        let result_low = sensor
+            .set_relative_humidity_threshold_low(TEST_THRESHOLD_LOW)
+            .await;
+        assert!(result_low.is_ok());
+        assert_approx_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+
+        let result_high = sensor
+            .set_relative_humidity_threshold_high(TEST_THRESHOLD_HIGH)
+            .await;
+        assert!(result_high.is_ok());
+        assert_approx_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
+    }
+
+    #[tokio::test]
+    async fn test_async_humidity_threshold_set_trait_mut_ref() {
+        let mut sensor = MockAsyncHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: TEST_INITIAL_THRESHOLD,
+            threshold_high: TEST_INITIAL_THRESHOLD,
+        };
+
+        {
+            let mut_ref = &mut sensor;
+            let result_low = mut_ref
+                .set_relative_humidity_threshold_low(TEST_THRESHOLD_LOW)
+                .await;
+            assert!(result_low.is_ok());
+        }
+
+        assert_approx_eq!(sensor.threshold_low, TEST_THRESHOLD_LOW);
+
+        {
+            let mut_ref = &mut sensor;
+            let result_high = mut_ref
+                .set_relative_humidity_threshold_high(TEST_THRESHOLD_HIGH)
+                .await;
+            assert!(result_high.is_ok());
+        }
+
+        assert_approx_eq!(sensor.threshold_high, TEST_THRESHOLD_HIGH);
+    }
+}

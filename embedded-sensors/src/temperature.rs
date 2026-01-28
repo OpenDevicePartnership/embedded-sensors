@@ -57,3 +57,54 @@ impl<T: TemperatureSensor + ?Sized> TemperatureSensor for &mut T {
         T::temperature(self)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sensor::{Error, ErrorKind};
+    use assert_approx_eq::assert_approx_eq;
+
+    // Mock test value
+    const TEST_TEMP: DegreesCelsius = 27.0;
+
+    #[derive(Debug)]
+    struct MockError;
+
+    impl Error for MockError {
+        fn kind(&self) -> ErrorKind {
+            ErrorKind::Other
+        }
+    }
+
+    struct MockTempSensor {
+        value: DegreesCelsius,
+    }
+
+    impl crate::sensor::ErrorType for MockTempSensor {
+        type Error = MockError;
+    }
+
+    impl TemperatureSensor for MockTempSensor {
+        fn temperature(&mut self) -> Result<DegreesCelsius, Self::Error> {
+            Ok(self.value)
+        }
+    }
+
+    #[test]
+    fn test_temperature_sensor_trait() {
+        let mut sensor = MockTempSensor { value: TEST_TEMP };
+        let result = sensor.temperature();
+        assert!(result.is_ok());
+        assert_approx_eq!(result.unwrap(), TEST_TEMP);
+    }
+
+    #[test]
+    fn test_temperature_sensor_trait_mut_ref() {
+        let mut sensor = MockTempSensor { value: TEST_TEMP };
+        let mut_ref = &mut sensor;
+        let result = mut_ref.temperature();
+        assert!(result.is_ok());
+        let value = result.unwrap();
+        assert_approx_eq!(value, TEST_TEMP);
+    }
+}

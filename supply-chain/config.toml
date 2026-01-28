@@ -5,7 +5,10 @@
 version = "0.10"
 
 [imports.OpenDevicePartnership]
-url = "https://raw.githubusercontent.com/OpenDevicePartnership/rust-crate-audits/main/audits.toml"
+url = "https://raw.githubusercontent.com/OpenDevicePartnership/embedded-services/refs/heads/main/supply-chain/audits.toml"
+
+[imports.bytecode-alliance]
+url = "https://raw.githubusercontent.com/bytecodealliance/wasmtime/main/supply-chain/audits.toml"
 
 [imports.google]
 url = "https://raw.githubusercontent.com/google/rust-crate-audits/main/audits.toml"
@@ -58,3 +61,7 @@ criteria = "safe-to-deploy"
 [[exemptions.thiserror-impl]]
 version = "2.0.12"
 criteria = "safe-to-deploy"
+
+[[exemptions.tokio]]
+version = "1.49.0"
+criteria = "safe-to-run"
