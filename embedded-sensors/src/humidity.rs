@@ -40,6 +40,7 @@
 //! }
 //! ```
 
+use crate::decl_threshold_traits;
 use crate::sensor::ErrorType;
 
 /// Associates the units relative humidity (RH) samples are measured in with the underlying data type.
@@ -57,6 +58,24 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
         T::relative_humidity(self)
     }
 }
+
+// This macro generates the following blocking threshold traits:
+//
+// pub trait RelativeHumidityThresholdSet: RelativeHumiditySensor {
+//     fn set_relative_humidity_threshold_low(&mut self, threshold: Percentage) -> Result<(), Self::Error>;
+//     fn set_relative_humidity_threshold_high(&mut self, threshold: Percentage) -> Result<(), Self::Error>;
+// }
+//
+// pub trait RelativeHumidityHysteresis: RelativeHumidityThresholdSet {
+//     fn set_relative_humidity_threshold_hysteresis(&mut self, hysteresis: Percentage) -> Result<(), Self::Error>;
+// }
+decl_threshold_traits!(
+    blocking,
+    RelativeHumidity,
+    RelativeHumiditySensor,
+    Percentage,
+    "percentage"
+);
 
 #[cfg(test)]
 mod tests {
@@ -78,6 +97,9 @@ mod tests {
 
     struct MockHumiditySensor {
         value: Percentage,
+        threshold_low: Option<Percentage>,
+        threshold_high: Option<Percentage>,
+        hysteresis: Option<Percentage>,
     }
 
     impl crate::sensor::ErrorType for MockHumiditySensor {
@@ -90,10 +112,41 @@ mod tests {
         }
     }
 
+    impl RelativeHumidityThresholdSet for MockHumiditySensor {
+        fn set_relative_humidity_threshold_low(
+            &mut self,
+            threshold: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.threshold_low = Some(threshold);
+            Ok(())
+        }
+
+        fn set_relative_humidity_threshold_high(
+            &mut self,
+            threshold: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.threshold_high = Some(threshold);
+            Ok(())
+        }
+    }
+
+    impl RelativeHumidityHysteresis for MockHumiditySensor {
+        fn set_relative_humidity_threshold_hysteresis(
+            &mut self,
+            hysteresis: Percentage,
+        ) -> Result<(), Self::Error> {
+            self.hysteresis = Some(hysteresis);
+            Ok(())
+        }
+    }
+
     #[test]
     fn test_humidity_sensor_trait() {
         let mut sensor = MockHumiditySensor {
             value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
         };
         let result = sensor.relative_humidity();
         assert!(result.is_ok());
@@ -104,11 +157,93 @@ mod tests {
     fn test_humidity_sensor_trait_mut_ref() {
         let mut sensor = MockHumiditySensor {
             value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
         };
         let mut_ref = &mut sensor;
         let result = mut_ref.relative_humidity();
         assert!(result.is_ok());
         let value = result.unwrap();
         assert_approx_eq!(value, TEST_HUMIDITY);
+    }
+
+    #[test]
+    fn test_humidity_threshold_set_low() {
+        let mut sensor = MockHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
+        };
+        let threshold = 50.0;
+        let result = sensor.set_relative_humidity_threshold_low(threshold);
+        assert!(result.is_ok());
+        assert_approx_eq!(sensor.threshold_low.unwrap(), threshold);
+    }
+
+    #[test]
+    fn test_humidity_threshold_set_high() {
+        let mut sensor = MockHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
+        };
+        let threshold = 80.0;
+        let result = sensor.set_relative_humidity_threshold_high(threshold);
+        assert!(result.is_ok());
+        assert_approx_eq!(sensor.threshold_high.unwrap(), threshold);
+    }
+
+    #[test]
+    fn test_humidity_threshold_set_mut_ref() {
+        let mut sensor = MockHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
+        };
+        let mut_ref = &mut sensor;
+        let low_threshold = 40.0;
+        let high_threshold = 90.0;
+
+        let result_low = mut_ref.set_relative_humidity_threshold_low(low_threshold);
+        assert!(result_low.is_ok());
+
+        let result_high = mut_ref.set_relative_humidity_threshold_high(high_threshold);
+        assert!(result_high.is_ok());
+
+        assert_approx_eq!(sensor.threshold_low.unwrap(), low_threshold);
+        assert_approx_eq!(sensor.threshold_high.unwrap(), high_threshold);
+    }
+
+    #[test]
+    fn test_humidity_hysteresis() {
+        let mut sensor = MockHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
+        };
+        let hyst = 5.0;
+        let result = sensor.set_relative_humidity_threshold_hysteresis(hyst);
+        assert!(result.is_ok());
+        assert_approx_eq!(sensor.hysteresis.unwrap(), hyst);
+    }
+
+    #[test]
+    fn test_humidity_hysteresis_mut_ref() {
+        let mut sensor = MockHumiditySensor {
+            value: TEST_HUMIDITY,
+            threshold_low: None,
+            threshold_high: None,
+            hysteresis: None,
+        };
+        let mut_ref = &mut sensor;
+        let hyst = 3.0;
+        let result = mut_ref.set_relative_humidity_threshold_hysteresis(hyst);
+        assert!(result.is_ok());
+        assert_approx_eq!(sensor.hysteresis.unwrap(), hyst);
     }
 }

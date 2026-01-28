@@ -82,8 +82,7 @@
 //! }
 //! ```
 
-use crate::decl_threshold_traits;
-use crate::sensor::ErrorType;
+use crate::sensor::{decl_threshold_traits, ErrorType};
 pub use embedded_sensors_hal::humidity::Percentage;
 
 /// Async Relative Humidity Sensor methods.
@@ -99,7 +98,22 @@ impl<T: RelativeHumiditySensor + ?Sized> RelativeHumiditySensor for &mut T {
     }
 }
 
+// This macro generates the following async threshold traits:
+//
+// pub trait RelativeHumidityThresholdSet: RelativeHumiditySensor {
+//     async fn set_relative_humidity_threshold_low(&mut self, threshold: Percentage) -> Result<(), Self::Error>;
+//     async fn set_relative_humidity_threshold_high(&mut self, threshold: Percentage) -> Result<(), Self::Error>;
+// }
+//
+// pub trait RelativeHumidityHysteresis: RelativeHumidityThresholdSet {
+//     async fn set_relative_humidity_threshold_hysteresis(&mut self, hysteresis: Percentage) -> Result<(), Self::Error>;
+// }
+//
+// pub trait RelativeHumidityThresholdWait: RelativeHumidityThresholdSet {
+//     async fn wait_for_relative_humidity_threshold(&mut self) -> Result<Percentage, Self::Error>;
+// }
 decl_threshold_traits!(
+    async,
     RelativeHumidity,
     RelativeHumiditySensor,
     Percentage,
