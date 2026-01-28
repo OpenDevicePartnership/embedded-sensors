@@ -85,7 +85,7 @@ impl<T: ErrorType + ?Sized> ErrorType for &mut T {
 
 /// Generates threshold traits for the specified sensor type.
 ///
-/// This macro supports both blocking and async sensor.
+/// This macro supports both blocking and async sensors.
 /// When used with `blocking` mode, it generates `ThresholdSet` and `Hysteresis` traits.
 /// When used with `async` mode, it additionally generates `ThresholdWait` trait.
 #[macro_export]
