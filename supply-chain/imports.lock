@@ -5,6 +5,7 @@
 who = "Robert Zieba <robertzieba@microsoft.com>"
 criteria = "safe-to-run"
 version = "2.5.0"
+aggregated-from = "https://raw.githubusercontent.com/OpenDevicePartnership/embedded-services/refs/heads/main/supply-chain/audits.toml"
 
 [[audits.bytecode-alliance.audits.tokio-macros]]
 who = "Alex Crichton <alex@alexcrichton.com>"
