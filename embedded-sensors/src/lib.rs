@@ -6,3 +6,8 @@
 pub mod humidity;
 pub mod sensor;
 pub mod temperature;
+
+#[doc(hidden)]
+pub mod __private {
+    pub use paste::paste;
+}

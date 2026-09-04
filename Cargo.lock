@@ -62,7 +62,6 @@ dependencies = [
  "assert_approx_eq",
  "defmt",
  "embedded-sensors-hal",
- "paste",
  "tokio",
 ]
 
