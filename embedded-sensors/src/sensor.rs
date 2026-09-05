@@ -111,7 +111,7 @@ macro_rules! decl_threshold_traits {
             @generate,
             [kw_async = async],
             [op_await = .await],
-            [doc_suffix = " asynchronously"],
+            [doc_suffix = "asynchronously"],
             $SensorName,
             $SensorTrait,
             $SampleType,
