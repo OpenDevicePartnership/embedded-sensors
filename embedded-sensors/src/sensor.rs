@@ -119,7 +119,7 @@ macro_rules! decl_threshold_traits {
         );
 
         // Declare Async-specific trait (only generated for async mode).
-        paste::paste! {
+        $crate::__private::paste! {
             #[doc = concat!(" Asynchronously wait for ", stringify!($SensorName), " measurements to exceed specified thresholds.")]
             pub trait [<$SensorName ThresholdWait>]: [<$SensorName ThresholdSet>] {
                 #[doc = concat!(" Wait for ", stringify!($SensorName), " to be measured above or below the previously set high and low thresholds.")]
@@ -138,7 +138,7 @@ macro_rules! decl_threshold_traits {
 
     // Common trait and functions definitions for both blocking and async modes.
     (@generate, [kw_async = $($kw:ident)?], [op_await = $($op:tt)*], [doc_suffix = $doc_suffix:expr], $SensorName:ident, $SensorTrait:ident, $SampleType:ty, $unit:expr) => {
-        paste::paste! {
+        $crate::__private::paste! {
             #[doc = concat!(" Set ", stringify!($SensorName), " thresholds ", $doc_suffix, ".")]
             pub trait [<$SensorName ThresholdSet>]: $SensorTrait {
                 #[doc = concat!(" Set lower ", stringify!($SensorName), " threshold (in ", $unit, ").")]
