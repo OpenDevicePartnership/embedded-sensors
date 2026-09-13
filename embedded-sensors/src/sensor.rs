@@ -128,6 +128,7 @@ macro_rules! decl_threshold_traits {
             }
 
             impl<T: [<$SensorName ThresholdWait>] + ?Sized> [<$SensorName ThresholdWait>] for &mut T {
+                #[inline]
                 async fn [<wait_for_ $SensorName:snake _threshold>](&mut self) -> Result<$SampleType, Self::Error> {
                     T::[<wait_for_ $SensorName:snake _threshold>](self).await
                 }
@@ -154,16 +155,19 @@ macro_rules! decl_threshold_traits {
             }
 
             impl<T: [<$SensorName ThresholdSet>] + ?Sized> [<$SensorName ThresholdSet>] for &mut T {
+                #[inline]
                 $($kw)? fn [<set_ $SensorName:snake _threshold_low>](&mut self, threshold: $SampleType) -> Result<(), Self::Error> {
                     T::[<set_ $SensorName:snake _threshold_low>](self, threshold) $($op)*
                 }
 
+                #[inline]
                 $($kw)? fn [<set_ $SensorName:snake _threshold_high>](&mut self, threshold: $SampleType) -> Result<(), Self::Error> {
                     T::[<set_ $SensorName:snake _threshold_high>](self, threshold) $($op)*
                 }
             }
 
             impl<T: [<$SensorName Hysteresis>] + ?Sized> [<$SensorName Hysteresis>] for &mut T {
+                #[inline]
                 $($kw)? fn [<set_ $SensorName:snake _threshold_hysteresis>](&mut self, hysteresis: $SampleType) -> Result<(), Self::Error> {
                     T::[<set_ $SensorName:snake _threshold_hysteresis>](self, hysteresis) $($op)*
                 }
